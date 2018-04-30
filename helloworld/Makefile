@@ -7,7 +7,7 @@ run: $(OUTPUT)
 	./$(OUTPUT) 10
 
 $(OUTPUT): $(OUTPUT).o
-	$(CC) -o $(OUTPUT) $(OUTPUT).o -I.
+	$(CC) -Wall -g -o $(OUTPUT) $(OUTPUT).o -I -lpthread.
 
 clean:
 	rm -f *.o
