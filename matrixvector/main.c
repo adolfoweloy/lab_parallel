@@ -5,6 +5,9 @@
 //  Performs the multiplication of a matrix A by some vector X.
 //  Inspired on Peter Pacheco book (An Introduction to Parallel Programming).
 //
+//  This source code is a good source to better understand how
+//  to dynamic allocate multidimensional arrays.
+//
 //  Created by Adolfo Eloy on 29/04/18.
 //
 
@@ -56,9 +59,9 @@ int main(int argc, char *argv[])
     srand((unsigned) time(0));
 
     // allocating matrix memory
-    A = malloc(sizeof(int) * m * n);
-    x = malloc(sizeof(int) * n);
-    y = malloc(sizeof(int) * m);
+    A = calloc(m, sizeof(int *));
+    x = calloc(n, sizeof(int *));
+    y = calloc(m, sizeof(int *));
 
     // generate matrices
     matrix_gen(A, m, n);
@@ -80,7 +83,9 @@ int main(int argc, char *argv[])
     print_matrix(y, m, 1);
 
     // clearing dangling pointers
-    free(threads); threads = NULL;
+    free(threads);
+    threads = NULL;
+
     free(A); A = NULL;
     free(x); x = NULL;
     free(y); y = NULL;
@@ -97,13 +102,9 @@ void* p_matrix_vector_mult(void *params)
 
     for (long i = first_row; i < last_row; i++)
     {
-        y[i] = malloc(sizeof(int));
         y[i][0] = 0;
         for (long j = 0; j < n; j++)
-        {
             y[i][0] += A[i][j] * x[j][0];
-        }
-
     }
 
     return NULL;
@@ -114,7 +115,7 @@ void print_matrix(int **array, int m, int n)
     for (int i = 0; i < m; i++)
     {
         for (int j = 0; j < n; j++)
-            printf("%d ", array[i][j]);
+            printf("array[%d][%d]=%04d \t", i, j, array[i][j]);
         printf("\n");
     }
     printf("\n");
@@ -124,11 +125,8 @@ void matrix_gen(int **array, int m, int n)
 {
     for (int i = 0; i < m; i++)
     {
-        array[i] = malloc(sizeof(int) * n);
+        array[i] = calloc(n, sizeof(int));
         for (int j = 0; j < n; j++)
-        {
           array[i][j] = rand() % 100;
-        }
-
     }
 }
